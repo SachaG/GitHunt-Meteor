@@ -1,8 +1,12 @@
+import Meteor from 'meteor/meteor';
+
 import { merge } from 'lodash';
 import { schema as gitHubSchema, resolvers as gitHubResolvers } from './github/schema';
 import { schema as sqlSchema, resolvers as sqlResolvers } from './sql/schema';
 import { makeExecutableSchema } from 'graphql-tools';
 import { pubsub } from './subscriptions';
+
+import { Entries, Comments } from '../collections/collections';
 
 const rootSchema = [`
 
@@ -92,14 +96,17 @@ const rootResolvers = {
     feed(root, { type, offset, limit }, context) {
       // Ensure API consumer can only fetch 10 items at most
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
-
-      return context.Entries.getForFeed(type, offset, protectedLimit);
+      const sort = type === 'TOP' ? { score: -1 } : { createdAt: -1 };
+      return Entries.find({}, { sort: sort, skip: offset, limit: protectedLimit }).fetch();
+      // return context.Entries.getForFeed(type, offset, protectedLimit);
     },
     entry(root, { repoFullName }, context) {
-      return context.Entries.getByRepoFullName(repoFullName);
+      return Entries.findOne({ 'repository.repoFullName': repoFullName });
+      // return context.Entries.getByRepoFullName(repoFullName);
     },
     currentUser(root, args, context) {
-      return context.user || null;
+      console.log(Meteor.users)
+      return Meteor.users.findOne(context.userId) || null;
     },
   },
   Mutation: {
