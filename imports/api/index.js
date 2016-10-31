@@ -3,15 +3,23 @@ import express from 'express';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 
+import { Meteor } from 'meteor/meteor';
+import { WebApp } from 'meteor/webapp';
+import { check } from 'meteor/check';
+import { Accounts } from 'meteor/accounts-base';
+import { _ } from 'meteor/underscore';
+
 import {
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
 } from './githubKeys';
 
-import { setUpGitHubLogin } from './githubLogin';
+// import { setUpGitHubLogin } from './githubLogin';
 import { GitHubConnector } from './github/connector';
 import { Repositories, Users } from './github/models';
-import { Entries, Comments } from './sql/models';
+// import { Entries, Comments } from './sql/models';
+
+import { Entries, Comments } from '../collections/collections';
 
 import { createServer } from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
@@ -31,7 +39,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-setUpGitHubLogin(app);
+// setUpGitHubLogin(app);
 
 app.use('/graphql', graphqlExpress((req) => {
   // Get the query, the same way express-graphql does it
@@ -68,8 +76,8 @@ app.use('/graphql', graphqlExpress((req) => {
       user,
       Repositories: new Repositories({ connector: gitHubConnector }),
       Users: new Users({ connector: gitHubConnector }),
-      Entries: new Entries(),
-      Comments: new Comments(),
+      // Entries: new Entries(),
+      // Comments: new Comments(),
     },
   };
 }));
