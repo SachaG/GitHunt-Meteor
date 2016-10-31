@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Link } from 'react-router';
+import { Accounts } from 'meteor/std:accounts-ui';
 
 function Profile({ loading, currentUser }) {
   if (loading) {
@@ -34,9 +35,9 @@ function Profile({ loading, currentUser }) {
     );
   }
   return (
-    <p className="navbar-text navbar-right">
-      <a href="/login/github">Log in with GitHub</a>
-    </p>
+    <div className="navbar-text navbar-right">
+      <Accounts.ui.LoginForm />
+    </div>
   );
 }
 

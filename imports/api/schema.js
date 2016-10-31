@@ -104,7 +104,7 @@ const rootResolvers = {
     },
     currentUser(root, args, context) {
       console.log(context)
-      return Meteor.users.findOne(context.userId) || null;
+      return context && context.userId && Meteor.users.findOne(context.userId) || null;
     },
   },
   Mutation: {
