@@ -9,7 +9,7 @@ try {
   } = Meteor.settings;
 
   ServiceConfiguration.configurations.upsert({service: 'github'}, {
-    $set: { client_id: GITHUB_CLIENT_ID, secret: GITHUB_CLIENT_SECRET }
+    $set: { clientId: GITHUB_CLIENT_ID, secret: GITHUB_CLIENT_SECRET }
   });
 
 } catch (error) {
