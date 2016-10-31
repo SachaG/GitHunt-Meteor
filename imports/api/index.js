@@ -6,7 +6,6 @@ import bodyParser from 'body-parser';
 import { createApolloServer } from 'meteor/apollo';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 
-import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';

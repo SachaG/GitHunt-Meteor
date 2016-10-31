@@ -1,4 +1,3 @@
-import Meteor from 'meteor/meteor';
 import dotenv from 'dotenv';
 
 dotenv.config({ silent: true });

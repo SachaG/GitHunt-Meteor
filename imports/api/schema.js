@@ -1,5 +1,3 @@
-import Meteor from 'meteor/meteor';
-
 import { merge } from 'lodash';
 import { schema as gitHubSchema, resolvers as gitHubResolvers } from './github/schema';
 import { schema as sqlSchema, resolvers as sqlResolvers } from './sql/schema';
@@ -105,7 +103,7 @@ const rootResolvers = {
       // return context.Entries.getByRepoFullName(repoFullName);
     },
     currentUser(root, args, context) {
-      console.log(Meteor.users)
+      console.log(context)
       return Meteor.users.findOne(context.userId) || null;
     },
   },
