@@ -29,13 +29,27 @@ type Repository {
 # A user object from the GitHub API. This uses the exact field names returned from the GitHub API.
 type User {
   # The name of the user, e.g. apollostack
-  login: String!
+  login: String
 
   # The URL to a directly embeddable image for this user's avatar
-  avatar_url: String!
+  avatar_url: String
 
   # The URL of this user's GitHub page
-  html_url: String!
+  html_url: String
+
+  _id: String
+
+  createdAt: String
+
+  services: Services
+}
+
+type Services {
+  github: GitHub
+}
+
+type GitHub {
+  username: String
 }
 `];
 

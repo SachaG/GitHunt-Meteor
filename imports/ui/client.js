@@ -1,52 +1,58 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Router, browserHistory } from 'react-router';
-import { createNetworkInterface } from 'apollo-client';
+// import { createNetworkInterface } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
-import { Client } from 'subscriptions-transport-ws';
-import * as ReactGA from 'react-ga';
+// import { Client } from 'subscriptions-transport-ws';
+// import * as ReactGA from 'react-ga';
 // Polyfill fetch
 import 'isomorphic-fetch';
 
 import './style/index.css';
 
 import routes from './routes';
-import createApolloClient from './helpers/create-apollo-client';
-import addGraphQLSubscriptions from './helpers/subscriptions';
+// import createApolloClient from './helpers/create-apollo-client';
+// import addGraphQLSubscriptions from './helpers/subscriptions';
 
-import { client } from '../api/client';
+import { meteorClientConfig } from 'meteor/apollo';
 
-const wsClient = new Client('ws://localhost:8080');
+import ApolloClient from 'apollo-client';
 
-const networkInterface = createNetworkInterface({
-  uri: '/graphql',
-  opts: {
-    credentials: 'same-origin',
-  },
-  transportBatching: true,
-});
+// import { client } from '../api/client';
 
-const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
-  networkInterface,
-  wsClient,
-);
+// const wsClient = new Client('ws://localhost:8080');
 
-// Initialize Analytics
-ReactGA.initialize('UA-74643563-4');
+// const networkInterface = createNetworkInterface({
+//   uri: '/graphql',
+//   opts: {
+//     credentials: 'same-origin',
+//   },
+//   transportBatching: true,
+// });
 
-function logPageView() {
-  ReactGA.set({ page: window.location.pathname });
-  ReactGA.pageview(window.location.pathname);
-}
+// const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
+//   networkInterface,
+//   wsClient,
+// );
+
+// // Initialize Analytics
+// ReactGA.initialize('UA-74643563-4');
+
+// function logPageView() {
+//   ReactGA.set({ page: window.location.pathname });
+//   ReactGA.pageview(window.location.pathname);
+// }
 
 // const client = createApolloClient({
 //   networkInterface: networkInterfaceWithSubscriptions,
 //   initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
 // });
 
+const client = new ApolloClient(meteorClientConfig());
+
 render((
   <ApolloProvider client={client}>
-    <Router history={browserHistory} onUpdate={logPageView}>
+    <Router history={browserHistory}>
       {routes}
     </Router>
   </ApolloProvider>

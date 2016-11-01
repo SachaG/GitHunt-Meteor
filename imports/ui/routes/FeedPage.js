@@ -13,8 +13,8 @@ class FeedPage extends React.Component {
   }
 
   render() {
-    const { vote, loading, currentUser, feed, fetchMore } = this.props;
 
+    const { vote, loading, currentUser, feed, fetchMore } = this.props;
     return (
       <div>
         <Feed
@@ -32,7 +32,11 @@ class FeedPage extends React.Component {
 FeedPage.propTypes = {
   loading: React.PropTypes.bool.isRequired,
   currentUser: React.PropTypes.shape({
-    login: React.PropTypes.string.isRequired,
+    services: React.PropTypes.shape({
+      github: React.PropTypes.shape({
+        username: React.PropTypes.string.isRequired,
+      }),
+    }),
   }),
   feed: Feed.propTypes.entries,
   fetchMore: React.PropTypes.func,
@@ -45,7 +49,11 @@ const FEED_QUERY = gql`
     # since we literally just need this info to determine whether to
     # show upvote/downvote buttons
     currentUser {
-      login
+      services {
+        github {
+          username
+        }
+      }
     }
     feed(type: $type, offset: $offset, limit: $limit) {
       ...FeedEntry

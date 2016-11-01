@@ -15,7 +15,7 @@ function Profile({ loading, currentUser }) {
     return (
       <span>
         <p className="navbar-text navbar-right">
-          {currentUser.login}
+          {currentUser.services.github.username}
           &nbsp;
           <a href="/logout">Log out</a>
         </p>
@@ -44,15 +44,22 @@ function Profile({ loading, currentUser }) {
 Profile.propTypes = {
   loading: React.PropTypes.bool,
   currentUser: React.PropTypes.shape({
-    login: React.PropTypes.string.isRequired,
+    services: React.PropTypes.shape({
+      github: React.PropTypes.shape({
+        username: React.PropTypes.string.isRequired,
+      }),
+    }),
   }),
 };
 
 const PROFILE_QUERY = gql`
   query CurrentUserForLayout {
     currentUser {
-      login
-      avatar_url
+      services {
+        github {
+          username
+        }
+      }
     }
   }
 `;
