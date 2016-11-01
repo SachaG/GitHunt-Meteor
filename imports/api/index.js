@@ -3,7 +3,9 @@ import express from 'express';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 
-import { createApolloServer } from 'meteor/apollo';
+// import { createApolloServer } from 'meteor/apollo';
+import { createApolloServer } from './server.js';
+
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 
 import { WebApp } from 'meteor/webapp';
@@ -29,10 +31,11 @@ import { subscriptionManager } from './subscriptions';
 
 import schema from './schema';
 
+import { client } from './client.js';
+
 createApolloServer({
   schema,
 });
-
 
 // let PORT = 3010;
 // if (process.env.PORT) {

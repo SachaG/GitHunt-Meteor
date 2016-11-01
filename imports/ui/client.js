@@ -14,6 +14,8 @@ import routes from './routes';
 import createApolloClient from './helpers/create-apollo-client';
 import addGraphQLSubscriptions from './helpers/subscriptions';
 
+import { client } from '../api/client';
+
 const wsClient = new Client('ws://localhost:8080');
 
 const networkInterface = createNetworkInterface({
@@ -37,10 +39,10 @@ function logPageView() {
   ReactGA.pageview(window.location.pathname);
 }
 
-const client = createApolloClient({
-  networkInterface: networkInterfaceWithSubscriptions,
-  initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
-});
+// const client = createApolloClient({
+//   networkInterface: networkInterfaceWithSubscriptions,
+//   initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
+// });
 
 render((
   <ApolloProvider client={client}>

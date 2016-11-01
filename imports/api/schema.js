@@ -103,6 +103,7 @@ const rootResolvers = {
       // return context.Entries.getByRepoFullName(repoFullName);
     },
     currentUser(root, args, context) {
+      console.log("currentUser")
       console.log(context)
       return context && context.userId && Meteor.users.findOne(context.userId) || null;
     },
