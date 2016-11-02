@@ -28,31 +28,31 @@ type Vote {
 # Information about a GitHub repository submitted to GitHunt
 type Entry {
   # Information about the repository from GitHub
-  repository: Repository!
+  repository: Repository
 
   # The GitHub user who submitted this entry
-  postedBy: User!
+  postedBy: User
 
   # A timestamp of when the entry was submitted
-  createdAt: Float! # Actually a date
+  createdAt: Float # Actually a date
 
   # The score of this repository, upvotes - downvotes
-  score: Int!
+  score: Int
 
   # The hot score of this repository
-  hotScore: Int!
+  hotScore: Int
 
   # Comments posted about this repository
-  comments: [Comment]! # Should this be paginated?
+  comments: [Comment] # Should this be paginated?
 
   # The number of comments posted about this repository
-  commentCount: Int!
+  commentCount: Int
 
   # The SQL ID of this entry
-  id: Int!
+  _id: String
 
   # XXX to be changed
-  vote: Vote!
+  vote: Vote
 }
 
 `];

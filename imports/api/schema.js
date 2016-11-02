@@ -4,7 +4,7 @@ import { schema as sqlSchema, resolvers as sqlResolvers } from './sql/schema';
 import { makeExecutableSchema } from 'graphql-tools';
 import { pubsub } from './subscriptions';
 
-import { Entries, Comments } from '../collections/collections';
+// import { Entries, Comments } from '../collections/collections';
 
 const rootSchema = [`
 
@@ -95,7 +95,7 @@ const rootResolvers = {
       // Ensure API consumer can only fetch 10 items at most
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
       const sort = type === 'TOP' ? { score: -1 } : { createdAt: -1 };
-      return Entries.find({}, { sort: sort, skip: offset, limit: protectedLimit }).fetch();
+      return context.Entries.find({}, { sort: sort, skip: offset, limit: protectedLimit }).fetch();
       // return context.Entries.getForFeed(type, offset, protectedLimit);
     },
     entry(root, { repoFullName }, context) {
@@ -103,71 +103,76 @@ const rootResolvers = {
       // return context.Entries.getByRepoFullName(repoFullName);
     },
     currentUser(root, args, context) {
-      console.log("currentUser")
-      console.log(context)
       return context && context.userId && Meteor.users.findOne(context.userId) || null;
     },
   },
   Mutation: {
-    // submitRepository(root, { repoFullName }, context) {
-    //   if (!context.user) {
-    //     throw new Error('Must be logged in to submit a repository.');
-    //   }
+    submitRepository(root, { repoFullName }, context) {
+      const user = Meteor.users.findOne(context.userId);
+      if (!context.userId) {
+        throw new Error('Must be logged in to submit a repository.');
+      }
 
-    //   return Promise.resolve()
-    //     .then(() => (
-    //       context.Repositories.getByFullName(repoFullName)
-    //         .catch(() => {
-    //           throw new Error(`Couldn't find repository named "${repoFullName}"`);
-    //         })
-    //     ))
-    //     .then(() => (
-    //       context.Entries.submitRepository(repoFullName, context.user.login)
-    //     ))
-    //     .then(() => context.Entries.getByRepoFullName(repoFullName));
-    // },
+      return Promise.resolve()
+        .then(() => (
+          context.Repositories.getByFullName(repoFullName)
+            .catch(() => {
+              throw new Error(`Couldn't find repository named "${repoFullName}"`);
+            })
+        ))
+        .then(() => (
+          context.Entries.insert({
+            repositoryName: repoFullName,
+            postedBy: user.services.github.username,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          })
+          // context.Entries.submitRepository(repoFullName, user.services.github.username)
+        ))
+        // .then(() => context.Entries.getByRepoFullName(repoFullName));
+    },
 
-    // submitComment(root, { repoFullName, commentContent }, context) {
-    //   if (!context.user) {
-    //     throw new Error('Must be logged in to submit a comment.');
-    //   }
-    //   return Promise.resolve()
-    //     .then(() => (
-    //       context.Comments.submitComment(
-    //         repoFullName,
-    //         context.user.login,
-    //         commentContent
-    //       )
-    //     ))
-    //     .then(([id]) =>
-    //       context.Comments.getCommentById(id)
-    //     )
-    //     .then((comment) => {
-    //       // publish subscription notification
-    //       pubsub.publish('commentAdded', comment);
-    //       return comment;
-    //     });
-    // },
+    submitComment(root, { repoFullName, commentContent }, context) {
+      if (!context.user) {
+        throw new Error('Must be logged in to submit a comment.');
+      }
+      return Promise.resolve()
+        .then(() => (
+          context.Comments.submitComment(
+            repoFullName,
+            context.user.login,
+            commentContent
+          )
+        ))
+        .then(([id]) =>
+          context.Comments.getCommentById(id)
+        )
+        .then((comment) => {
+          // publish subscription notification
+          pubsub.publish('commentAdded', comment);
+          return comment;
+        });
+    },
 
-    // vote(root, { repoFullName, type }, context) {
-    //   if (!context.user) {
-    //     throw new Error('Must be logged in to vote.');
-    //   }
+    vote(root, { repoFullName, type }, context) {
+      if (!context.user) {
+        throw new Error('Must be logged in to vote.');
+      }
 
-    //   const voteValue = {
-    //     UP: 1,
-    //     DOWN: -1,
-    //     CANCEL: 0,
-    //   }[type];
+      const voteValue = {
+        UP: 1,
+        DOWN: -1,
+        CANCEL: 0,
+      }[type];
 
-    //   return context.Entries.voteForEntry(
-    //     repoFullName,
-    //     voteValue,
-    //     context.user.login
-    //   ).then(() => (
-    //     context.Entries.getByRepoFullName(repoFullName)
-    //   ));
-    // },
+      return context.Entries.voteForEntry(
+        repoFullName,
+        voteValue,
+        context.user.login
+      ).then(() => (
+        context.Entries.getByRepoFullName(repoFullName)
+      ));
+    },
   },
   Subscription: {
     commentAdded(comment) {

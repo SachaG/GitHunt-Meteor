@@ -33,8 +33,20 @@ import schema from './schema';
 
 // import { client } from './client.js';
 
+const gitHubConnector = new GitHubConnector({
+  clientId: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
+});
+
 createApolloServer({
   schema,
+  context: {
+    user() { return Meteor.users.findOne(this.userId); },
+    Repositories: new Repositories({ connector: gitHubConnector }),
+    Users: new Users({ connector: gitHubConnector }),
+    Entries: Entries,
+    Comments: Comments,
+  },
 });
 
 // let PORT = 3010;
